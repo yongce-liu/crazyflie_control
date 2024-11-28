@@ -19,7 +19,7 @@ setup(
     license='MIT',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': ["search=crazyflie_control.search:main",
+        'console_scripts': ["ergodic_search=crazyflie_control.ergodic_search:main",
         ],
     },
 )
