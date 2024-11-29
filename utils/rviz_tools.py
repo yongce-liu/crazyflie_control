@@ -5,31 +5,30 @@ from sensor_msgs.msg import PointCloud2, PointField
 
 
 class PonitCloudPublisher(rclpy.node.Node):
-    def __init__(self):
-        super().__init__("point_cloud_publisher")
-
+    def __init__(self, points_path):
+        self.points_path = points_path
+        node_name = points_path.split("/")[-1].split(".")[0]
+        super().__init__(node_name)
         # Initialize point cloud data
         self.points = self.generate_point_cloud()
-
         # Create PointCloud2 publisher
-        self.publisher = self.create_publisher(PointCloud2, "/contour", 10)
-
+        self.publisher = self.create_publisher(PointCloud2, '/'+node_name, 10)
         # Publish point cloud data
         self.publish_point_cloud()
 
     def generate_point_cloud(self):
         # Generate sample point cloud data
-        # [[0, 1], [0, 1]]
-        dat = np.loadtxt(
-            DATA_PATH+"dist_point.txt", delimiter=","
-        )
-        # 坐标变换[0, 1] -> [x_min, x_max]
+        try:
+            dat = np.load(self.points_path)
+            return dat
+            # x = dat[:, 0]  # Example x data
+            # y = dat[:, 1]  # Example y data
+            # z = dat[:, 2] # Example z data
+            # points = np.hstack((x.reshape(-1, 1), y.reshape(-1, 1), z.reshape(-1, 1)))
+            # return points
+        except:
+            print("Error: Please check the file path or file format.")
 
-        x = dat[:, 0]  # Example x data
-        y = dat[:, 1]  # Example y data
-        z = dat[:, 2]*2.5  # Example z data
-        points = np.hstack((x.reshape(-1, 1), y.reshape(-1, 1), z.reshape(-1, 1)))
-        return points
 
     def publish_point_cloud(self):
         # Create PointCloud2 message
@@ -43,9 +42,7 @@ class PonitCloudPublisher(rclpy.node.Node):
             PointField(name="x", offset=0, datatype=PointField.FLOAT32, count=1),
             PointField(name="y", offset=4, datatype=PointField.FLOAT32, count=1),
             PointField(name="z", offset=8, datatype=PointField.FLOAT32, count=1),
-            PointField(
-                name="intensity", offset=12, datatype=PointField.FLOAT32, count=1
-            ),  # Intensity field for color
+            PointField(name="intensity", offset=12, datatype=PointField.FLOAT32, count=1),  # Intensity field for color
         ]
         pointcloud_msg.is_bigendian = False
         pointcloud_msg.point_step = 16  # Size of each point in bytes

@@ -6,6 +6,7 @@ import pathlib
 from crazyflie_py import *
 
 from utils.track_traj import TrajTracking
+from utils.rviz_tools import PonitCloudPublisher
 
 def main():
     swarm = Crazyswarm()
@@ -19,18 +20,11 @@ def main():
     swarm.allcfs.takeoff(targetHeight=1.0, duration=3.0)
     swarm.timeHelper.sleep(5.0)
 
-    # nodes_1 = [
-    #     ContourPublisher(),
-    #     CrazyfliePoseSubscriber(
-    #         drone_name_list=[cf.prefix[1:] for cf in swarm.allcfs.crazyflies],
-    #         stop_time=60+5*2+2+3,
-    #         # stop_time=20+5*2+2+3,
-    #     ),
-    # ]
     data_path = str(pathlib.Path(__file__).parent / f"data")
+    nodes_1 = [PonitCloudPublisher(points_path=data_path+'/bunny.npy')]
     nodes_2 = [TrajTracking(crazyflie=cf, traj_root_path=data_path) for cf in swarm.allcfs.crazyflies]
     swarm.timeHelper.sleep(5.0)
-    nodes = nodes_2
+    nodes = nodes_1 + nodes_2
     executor = executors.MultiThreadedExecutor()
     for node in nodes:
         executor.add_node(node)
