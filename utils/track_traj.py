@@ -46,7 +46,8 @@ class TrajTracking(rclpy.node.Node):
         self.timer = self.create_timer(1 / self.rate, self._main_loop)
 
     def _position_msg_callback(self, msg: PoseStamped):
-        timestamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9 
+        timestamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9 # in seconds
+        # print(timestamp)
         self.position = [msg.pose.position.x, msg.pose.position.y, msg.pose.position.z]
         # self.position_buffer.append(self.position)
         self.position_buffer.append([timestamp] + self.position)

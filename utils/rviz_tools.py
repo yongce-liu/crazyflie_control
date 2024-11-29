@@ -4,7 +4,7 @@ import numpy as np
 from sensor_msgs.msg import PointCloud2, PointField
 
 
-class ContourPublisher(rclpy.node.Node):
+class PonitCloudPublisher(rclpy.node.Node):
     def __init__(self):
         super().__init__("point_cloud_publisher")
 
