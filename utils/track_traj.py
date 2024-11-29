@@ -16,7 +16,8 @@ class TrajTracking(rclpy.node.Node):
         # must have for trajectory:
         # - rate
         # - traj
-        traj_data = DataLoader(traj_root_path+f"{self.prefix}.npz")
+        self.data_root_path = traj_root_path
+        traj_data = DataLoader(self.data_root_path+f"{self.prefix}.npz")
         self.traj = traj_data.position
         self.rate = traj_data.rate
         self.traj_length = len(self.traj)
@@ -45,8 +46,10 @@ class TrajTracking(rclpy.node.Node):
         self.timer = self.create_timer(1 / self.rate, self._main_loop)
 
     def _position_msg_callback(self, msg: PoseStamped):
+        timestamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9 
         self.position = [msg.pose.position.x, msg.pose.position.y, msg.pose.position.z]
-        self.position_buffer.append(self.position)
+        # self.position_buffer.append(self.position)
+        self.position_buffer.append([timestamp] + self.position)
         # self.get_logger().info(f'{self.position}')
 
     def _velocity_msg_callback(self, msg: LogDataGeneric):
@@ -97,12 +100,15 @@ class TrajTracking(rclpy.node.Node):
             self.get_logger().warning("Empty state message & Not Connected.")
             return
 
-        if self.traj_current_idx == self.traj_length:
+        if self.traj_current_idx >= self.traj_length:
             self.cf.goTo(np.array(self.traj[-1]), 0.0, duration=1.0)
-            self.get_logger().info("Trajectory Completed...")
-            # self.get_logger().info('Timer cycle completed, shutting down...')
-            self.timer.cancel()
-            self.destroy_node()
+            self.traj_current_idx = self.traj_current_idx + 1
+            if self.traj_current_idx == self.traj_length + int(self.rate) :
+                self.get_logger().info("Trajectory Completed... & Save Position Data")
+                np.save(self.data_root_path+f"{self.prefix}_sub.npy", np.array(self.position_buffer))
+                # self.get_logger().info('Timer cycle completed, shutting down...')
+                self.timer.cancel()
+                self.destroy_node()
             return
 
         self.publish_traj(start_index=self.traj_current_idx - 5, length=10)
