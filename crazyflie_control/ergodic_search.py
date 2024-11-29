@@ -17,7 +17,8 @@ def main():
     # swarm.allcfs.setParam("colAv.ellipsoidY", 0.15)
     # swarm.allcfs.setParam("colAv.ellipsoidZ", 0.2)
 
-    swarm.allcfs.takeoff(targetHeight=1.0, duration=3.0)
+    # swarm.allcfs.takeoff(targetHeight=1.0, duration=3.0)
+    swarm.allcfs.takeoff(targetHeight=2.19238105, duration=3.0)
     swarm.timeHelper.sleep(5.0)
 
     data_path = str(pathlib.Path(__file__).parent / f"data")
