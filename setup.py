@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': ["ergodic_search=crazyflie_control.ergodic_search:main",
+                            "micp=crazyflie_control.micp:main",
         ],
     },
 )
