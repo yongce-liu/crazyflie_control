@@ -22,13 +22,12 @@ def main():
     swarm.allcfs.takeoff(targetHeight=1.0, duration=3.0)
     # swarm.allcfs.takeoff(targetHeight=2.19238105, duration=3.0)
     swarm.timeHelper.sleep(5.0)
-    data_path = str(pathlib.Path(__file__).parent / f"data")
-    for i in range(4):
-        cf = swarm.allcfs.crazyflies[i]
-        traj_data = DataLoader(data_path+f"{cf.prefix}.npz")
-        # cf.goTo(np.array(traj_data.position[0])+np.array([0,0,0.3]), 0.0, duration=3.)
-        cf.goTo(np.array(traj_data.position[0]), 0.0, duration=3.)
-    swarm.timeHelper.sleep(5.0)
+    # data_path = str(pathlib.Path(__file__).parent / f"data")
+    # for i in range(5):
+    #     cf = swarm.allcfs.crazyflies[i]
+    #     traj_data = DataLoader(data_path+f"{cf.prefix}.npz")
+    #     cf.goTo(np.array(traj_data.position[0])+np.array([0,0,0.5]), 0.0, duration=3.)
+    # swarm.timeHelper.sleep(5.0)
 
     data_path = str(pathlib.Path(__file__).parent / f"data")
     # nodes_1 = [PonitCloudPublisher(points_path=data_path+'/bunny.npy')]
